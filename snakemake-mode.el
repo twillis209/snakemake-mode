@@ -429,6 +429,18 @@ embedded R, you need to set mmm-global-mode to a non-nil value such as `maybe'."
   (mmm-add-mode-ext-class 'snakemake-mode nil 'snakemake-R-string-regular))
 
 
+;;; Folding
+
+(defun snakemake--hs-find-block-end (arg)
+  "Find the end of the current Snakemake block for hideshow.
+This function is called when point is at the beginning of a block.
+ARG is ignored but required by hideshow."
+  (let ((info (snakemake-block-info)))
+    (when info
+      (goto-char (nth 3 info))
+      (point))))
+
+
 ;;; Mode
 
 (defvar snakemake--font-lock-keywords
@@ -486,7 +498,17 @@ embedded R, you need to set mmm-global-mode to a non-nil value such as `maybe'."
        #'snakemake-block-or-defun-name)
 
   (set (make-local-variable 'font-lock-defaults)
-       (cons snakemake-font-lock-keywords (cdr font-lock-defaults))))
+       (cons snakemake-font-lock-keywords (cdr font-lock-defaults)))
+
+  ;; Configure hideshow for code folding
+  (require 'hideshow)
+  (add-to-list 'hs-special-modes-alist
+               `(snakemake-mode
+                 ,snakemake-rule-or-subworkflow-re
+                 ""
+                 "#"
+                 snakemake--hs-find-block-end
+                 nil)))
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("Snakefile\\'" . snakemake-mode))
