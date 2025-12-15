@@ -115,10 +115,12 @@
                                 ;; Keys for subworkflow blocks
                                 "configfile"
                                 "snakefile"
+                                "config"
                                 "workdir")
                             symbol-end))
             (sm-command (and symbol-start
                              (or "configfile"
+                                 "pathvar"
                                  "container"
                                  "containerized"
                                  "envvars"
@@ -444,20 +446,20 @@ ARG is ignored but required by hideshow."
 ;;; Mode
 
 (defvar snakemake--font-lock-keywords
-    `((,snakemake-rule-or-subworkflow-re
-       (1 font-lock-keyword-face nil 'lax)
-       (2 font-lock-function-name-face nil 'lax)
-       (3 font-lock-keyword-face nil 'lax))
-      (,(snakemake-rx line-start (one-or-more space)
-                      (group field-key)
-                      (zero-or-more space) ":")
-       1 font-lock-type-face)
-      (,(snakemake-rx line-start (zero-or-more space)
-                      (group sm-command)
-                      (zero-or-more space) ":")
-       1 font-lock-keyword-face)
-      (,(rx line-start (group "use rule ")) 1 font-lock-keyword-face)
-      (,(snakemake-rx (group sm-builtin)) 1 font-lock-builtin-face)))
+  `((,snakemake-rule-or-subworkflow-re
+     (1 font-lock-keyword-face nil 'lax)
+     (2 font-lock-function-name-face nil 'lax)
+     (3 font-lock-keyword-face nil 'lax))
+    (,(snakemake-rx line-start (one-or-more space)
+                    (group field-key)
+                    (zero-or-more space) ":")
+     1 font-lock-type-face)
+    (,(snakemake-rx line-start (zero-or-more space)
+                    (group sm-command)
+                    (zero-or-more space) ":")
+     1 font-lock-keyword-face)
+    (,(rx line-start (group "use rule ")) 1 font-lock-keyword-face)
+    (,(snakemake-rx (group sm-builtin)) 1 font-lock-builtin-face)))
 
 (defvar snakemake-font-lock-keywords)
 (if (bound-and-true-p python-font-lock-keywords-level-1)
